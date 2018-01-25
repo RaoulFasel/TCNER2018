@@ -52,8 +52,8 @@ print(Y[5])
 print(X.toarray().shape)
 model = createDNN(vectorizer.get_feature_names(), le.classes_)
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-keras.callbacks.EarlyStopping(monitor='val_acc',
+earlystop = keras.callbacks.EarlyStopping(monitor='val_acc',
                               min_delta=0.01,
                               patience=5,
                               verbose=0, mode='auto')
-model.fit(X.toarray(), Y, epochs=150, batch_size=10, validation_split=0.2, shuffle=True)
+model.fit(X.toarray(), Y, epochs=150, batch_size=10, validation_split=0.2, shuffle=True,callbacks=earlystop)
