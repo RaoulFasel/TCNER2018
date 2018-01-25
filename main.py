@@ -58,4 +58,4 @@ earlystop = keras.callbacks.EarlyStopping(monitor='val_acc',
                               patience=5,
                               verbose=0, mode='auto')
 checkpointer = ModelCheckpoint(filepath='temp/weights.hdf5', verbose=1, save_best_only=True)
-model.fit(X.toarray(), Y, epochs=150, batch_size=10, validation_split=0.2, shuffle=True,callbacks=[earlystop,checkpointer])
+model.fit(X.toarray(), Y, epochs=150, batch_size=300, validation_split=0.2, shuffle=True,callbacks=[earlystop,checkpointer])
