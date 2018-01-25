@@ -32,11 +32,11 @@ def create_train_set(data):
 
 
 def createDNN(features, labels):
-    model = Sequential()
-    model.add(Dense(150, input_dim=len(features), activation='relu'))
-    model.add(Dense(15, activation='tanh'))
-    model.add(Dense(len(labels), activation='sigmoid'))
-    return model
+    m = Sequential()
+    m.add(Dense(150, input_dim=len(features), activation='relu'))
+    m.add(Dense(15, activation='tanh'))
+    m.add(Dense(len(labels), activation='sigmoid'))
+    return m
 
 
 le = preprocessing.LabelEncoder()
