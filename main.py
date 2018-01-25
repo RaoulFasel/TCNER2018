@@ -5,7 +5,7 @@ import keras
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn import preprocessing
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense,Dropout
 from nltk.corpus import stopwords
 from keras.utils.np_utils import to_categorical
 
@@ -34,6 +34,7 @@ def create_train_set(data):
 def createDNN(features, labels):
     m = Sequential()
     m.add(Dense(150, input_dim=len(features), activation='relu'))
+    m.add(Dropout(rate=.1))
     m.add(Dense(15, activation='tanh'))
     m.add(Dense(len(labels), activation='sigmoid'))
     return m
