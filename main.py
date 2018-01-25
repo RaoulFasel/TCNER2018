@@ -8,6 +8,7 @@ from keras.models import Sequential
 from keras.layers import Dense,Dropout
 from nltk.corpus import stopwords
 from keras.utils.np_utils import to_categorical
+from keras.callbacks import ModelCheckpoint
 
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -56,4 +57,5 @@ earlystop = keras.callbacks.EarlyStopping(monitor='val_acc',
                               min_delta=0.01,
                               patience=5,
                               verbose=0, mode='auto')
-model.fit(X.toarray(), Y, epochs=150, batch_size=10, validation_split=0.2, shuffle=True,callbacks=earlystop)
+checkpointer = ModelCheckpoint(filepath='./tmp/weights.hdf5', verbose=1, save_best_only=True)
+model.fit(X.toarray(), Y, epochs=150, batch_size=10, validation_split=0.2, shuffle=True,callbacks=[earlystop,checkpointer])
