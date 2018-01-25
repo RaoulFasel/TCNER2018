@@ -1,14 +1,12 @@
 import csv
 import nltk
-import collections
+
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn import preprocessing
-
 from keras.models import Sequential
-from keras.layers import Dense
-
+from keras.layers import Dense,Conv1D
 from nltk.corpus import stopwords
-
+from keras.utils.np_utils import to_categorical
 nltk.download('punkt')
 nltk.download('stopwords')
 
@@ -17,8 +15,8 @@ stop = set(stopwords.words('english'))
 tokenizer = nltk.RegexpTokenizer(r'\w+')
 
 data = csv.DictReader(open("trainset.txt"), fieldnames=["id", "conference", "title"], delimiter='\t')
-vectorizer = CountVectorizer(min_df=2,max_df=100,stop_words=stop,token_pattern=r'\w+',analyzer="word")
-
+vectorizer = CountVectorizer(min_df=0.002,max_df=0.5,stop_words=stop,token_pattern=r"\b[^\d\W]+\b",strip_accents="ascii")
+print(vectorizer.get_params())
 # code that is not needed because of amazing sklearn
 # def preprocessor(data, tokenizer, min_count, max_count, min_length):
 #     conferences = []
@@ -53,19 +51,20 @@ def create_train_set(data):
 def createDNN(features,labels):
     model = Sequential()
     model.add(Dense(150, input_dim=len(features), activation='relu'))
-    model.add(Dense(15, activation='relu'))
-    model.add(Dense(1, activation='sigmoid'))
+    model.add(Dense(15, activation='tanh'))
+    model.add(Dense(len(labels), activation='sigmoid'))
     return model
 
 le = preprocessing.LabelEncoder()
 X,Y = create_train_set(data)
 X = vectorizer.fit_transform(X)
 Y = le.fit_transform(Y)
+Y = categorical_labels = to_categorical(Y, num_classes=None)
 print(vectorizer.get_feature_names())
 print(len(vectorizer.get_feature_names()))
 print(len(le.classes_))
 print(Y[5])
 print(X.toarray().shape)
-model = createDNN(vectorizer.get_feature_names(),list(le.classes_))
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+model = createDNN(vectorizer.get_feature_names(),le.classes_)
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 model.fit(X.toarray(), Y, epochs=150, batch_size=10)
