@@ -56,7 +56,7 @@ def create_callbacks(name):
                                           min_delta=0.01,
                                           patience=5,
                                           verbose=0, mode='auto'),
-            ModelCheckpoint(filepath='temp/'+name+'weights.hdf5', verbose=1, save_best_only=True)
+            ModelCheckpoint(filepath='temp/'+name+'_best_weights.hdf5', verbose=1, save_best_only=True)
             ]
 
 
