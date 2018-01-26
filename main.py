@@ -11,11 +11,18 @@ from nltk.corpus import stopwords
 from keras.utils.np_utils import to_categorical
 from keras.callbacks import ModelCheckpoint
 from sklearn.naive_bayes import GaussianNB
+from nltk import word_tokenize
+from nltk.stem import WordNetLemmatizer
 
 nltk.download('stopwords')
-
+nltk.download('wordnet')
 stop = set(stopwords.words('english'))
 
+class LemmaTokenizer(object):
+    def __init__(self):
+        self.wnl = WordNetLemmatizer()
+    def __call__(self, doc):
+        return [self.wnl.lemmatize(t) for t in word_tokenize(doc)]
 
 def create_train_set(data):
     x = []
@@ -89,12 +96,15 @@ def do_all_classifiers(clfs):
         y_test=Y_test
         pre = clf[1](**clf[4])
         x = pre.fit_transform(X).toarray()
+        print(pre.get_feature_names())
         x_test = pre.transform(X_test).toarray()
         x_submit = pre.transform(X_submit).toarray()
         print(pre.get_params())
 
 
+
         if(clf[2]):
+            #check for label encoder(needed for DNN)
             le = preprocessing.LabelEncoder()
             y = convert_to_cat(y,le)
             y_test = convert_to_cat(y_test,le)
@@ -107,6 +117,8 @@ def do_all_classifiers(clfs):
 
 def do_classifier(clf, x, y, x_test, y_test, x_submit, le,params,name):
     if params:
+        # check for extra classifier parameters
+
         params["callbacks"] = create_callbacks(name)
         clf.fit(x,y,**params)
     else:
@@ -115,6 +127,8 @@ def do_classifier(clf, x, y, x_test, y_test, x_submit, le,params,name):
     predict = clf.predict(x_test)
     submit_predict = clf.predict(x_submit)
     if le:
+        # check for label encoder(needed for DNN)
+
         print(confusion_matrix([le.classes_[r.tolist().index(max(r))] for r in y_test],
                            [le.classes_[r.tolist().index(max(r))] for r in predict], labels=le.classes_))
         write_predictions(name+"txt", [le.classes_[r.tolist().index(max(r))] for r in submit_predict])
@@ -122,8 +136,15 @@ def do_classifier(clf, x, y, x_test, y_test, x_submit, le,params,name):
         print(confusion_matrix(y_test,predict))
 
         write_predictions(name + "txt", submit_predict)
+
+
+
+
+# all classifiers to be trained and evaluated
+# Format:
+# [  Classifier,Vectorizer,Label to catogeries, name, Vectorizer parameters(dict) , classifier parameters(dict)  ]
 classifiers = [
-    [createDNN, CountVectorizer, True,"DNN1",{"min_df":0.001, "max_df":0.5, "stop_words":stop, "token_pattern":r"\b[^\d\W]+\b","strip_accents":"ascii"},{"epochs":150, "batch_size":300, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":0}],
+    [createDNN, CountVectorizer, True,"DNN1",{"tokenizer":LemmaTokenizer(),"min_df":0.001, "max_df":0.5, "stop_words":stop, "token_pattern":r"\b[^\d\W]+\b","strip_accents":"ascii"},{"epochs":150, "batch_size":300, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":0}],
     [create_BC, CountVectorizer, False, "NaiveBayes1",
      {"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      None],
