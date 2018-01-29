@@ -1,8 +1,9 @@
 import csv
 import nltk
 import keras
+import numpy
 from sklearn.cross_validation import train_test_split
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, accuracy_score
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn import preprocessing
 from keras.models import Sequential
@@ -87,7 +88,7 @@ def do_all_classifiers(clfs):
     X_submit = create_test_set(submitdata)
 
     X, X_test, Y, Y_test = train_test_split(X, Y, test_size=0.33, random_state=42)
-
+    run_results = []
     for clf in clfs:
         name = clf[3]
         params = clf[5]
@@ -112,8 +113,16 @@ def do_all_classifiers(clfs):
         else:
             c = clf[0]()
 
-        do_classifier(c,x,y,x_test,y_test,x_submit,le,params,name)
+        run_results.append(do_classifier(c,x,y,x_test,y_test,x_submit,le,params,name))
+    write_results(run_results)
 
+def write_results(results):
+    file = open("output/results.txt",'w')
+    for r in results:
+        file.write(r[2]+'\n')
+        print(r[1])
+        file.write("accuracy = "+str(r[1])+"\n")
+        file.write(numpy.array2string(r[0], separator=', ')+"\n")
 
 def do_classifier(clf, x, y, x_test, y_test, x_submit, le,params,name):
     if params:
@@ -131,10 +140,13 @@ def do_classifier(clf, x, y, x_test, y_test, x_submit, le,params,name):
 
         print(confusion_matrix([le.classes_[r.tolist().index(max(r))] for r in y_test],
                            [le.classes_[r.tolist().index(max(r))] for r in predict], labels=le.classes_))
+        return [(confusion_matrix([le.classes_[r.tolist().index(max(r))] for r in y_test],
+                          [le.classes_[r.tolist().index(max(r))] for r in predict], labels=le.classes_)),accuracy_score([le.classes_[r.tolist().index(max(r))] for r in y_test],
+                          [le.classes_[r.tolist().index(max(r))] for r in predict]),name]
         write_predictions(name+"txt", [le.classes_[r.tolist().index(max(r))] for r in submit_predict])
     else:
         print(confusion_matrix(y_test,predict))
-
+        return [confusion_matrix(y_test,predict),accuracy_score(y_test,predict),name]
         write_predictions(name + "txt", submit_predict)
 
 
