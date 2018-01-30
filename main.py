@@ -178,7 +178,7 @@ def do_all_classifiers(clfs):
             output_length = y.shape[1]
             vocabulary_size = len(vocabulary_inv)  # 18765
             x, x_test, y, y_test = train_test_split(x, y, test_size=0.33, random_state=42)
-            x_submit = load_test_data(X_submit,vocabulary,settings['tokenizer'])
+            x_submit = load_test_data(X_submit,vocabulary,settings['tokenizer'],sequence_length)
             embedding_dim = 256
             filter_sizes = [3, 4, 5]
             num_filters = 512
