@@ -5,9 +5,9 @@ import numpy
 from sklearn.cross_validation import train_test_split
 from sklearn.metrics import confusion_matrix, accuracy_score, f1_score
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn import preprocessing, svm
-from keras.models import Sequential
-from keras.layers import Dense, Dropout
+from sklearn import preprocessing
+from keras.models import Sequential, Model
+from keras.layers import Dense, Dropout, Input, Embedding, Convolution1D,GlobalMaxPooling1D
 from nltk.corpus import stopwords
 from keras.utils.np_utils import to_categorical
 from keras.callbacks import ModelCheckpoint
@@ -69,6 +69,27 @@ def createDNN(features, labels):
 
     return m
 
+def createCNN(features, labels):
+    m = Sequential()
+
+    # m.add(Embedding(len(features),
+    #                    50,
+    #                    input_length=len(features)))
+    #inputs = Input(batch_shape=(None,len(features)))
+    #print(inputs.shape)
+    print(len(features))
+    m.add(Convolution1D(1200,3,padding='valid', activation='relu', strides=1, input_shape=(len(features),1)))
+                            # filter_length=3,
+                            # border_mode='valid',
+                            # activation='relu',
+                            # input_shape=(1, len(features))))
+    m.add(GlobalMaxPooling1D())
+    m.add(Dense(len(labels), activation='softmax'))
+
+    #m = Model(inputs, output)
+    m.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+    return m
 
 def create_BC():
     clf = GaussianNB()
@@ -130,9 +151,12 @@ def do_all_classifiers(clfs):
         if (clf[2]):
             # check for label encode)r(needed for DNN)
             le = preprocessing.LabelEncoder()
-            y = convert_to_cat(y, le)
-            y_test = convert_to_cat(y_test, le)
-
+            y = convert_to_cat(y,le)
+            y_test = convert_to_cat(y_test,le)
+            if clf[0] == createCNN:
+                x = numpy.expand_dims(x, axis=2)
+                x_test = numpy.expand_dims(x_test, axis=2)
+                x_submit = numpy.expand_dims(x_submit, axis=2)
             c = clf[0](pre.get_feature_names(), le.classes_)
         else:
             c = clf[0]()
@@ -153,6 +177,7 @@ def write_results(results):
 def do_classifier(clf, x, y, x_test, y_test, x_submit, le, params, name,settings,n_features):
     if params:
         # check for extra classifier parameters
+
 
         params["callbacks"] = create_callbacks(name)
         clf.fit(x, y, **params)
@@ -195,5 +220,8 @@ classifiers = [
     [createDNN, CountVectorizer, True, "DNN2",
      {"tokenizer": None ,"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      {"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}]
+    [createCNN, CountVectorizer, True,"CNN1",{"min_df": 0.00001, "max_df": 0.6, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b","strip_accents": "ascii"},{"epochs":150, "batch_size":32, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":1}],
+    [createDNN, CountVectorizer, True,"DNN3",{"min_df": 0.00001, "max_df": 0.6, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},{"epochs":150, "batch_size":300, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":0}]
+
 ]
 do_all_classifiers(classifiers)
