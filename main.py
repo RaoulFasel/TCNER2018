@@ -176,7 +176,7 @@ def do_all_classifiers(clfs):
             x, y, vocabulary, vocabulary_inv = load_data(X,Y,settings['tokenizer'])
             sequence_length = x.shape[1]  # 56
             output_length = y.shape[1]
-            vocabulary_size = len(vocabulary_inv)+1  # 18765
+            vocabulary_size = len(vocabulary_inv)  # 18765
             x, x_test, y, y_test = train_test_split(x, y, test_size=0.33, random_state=42)
             x_submit = load_test_data(X_submit,vocabulary,settings['tokenizer'])
             embedding_dim = 256
@@ -238,7 +238,7 @@ def do_classifier(clf, x, y, x_test, y_test, x_submit, le, params, name,settings
 # Format:
 # [  Classifier,Vectorizer,Label to catogeries, name, Vectorizer parameters(dict) , classifier parameters(dict)  ]
 classifiers = [
-    [createCNN, None, False, "CNN1",{"tokenizer": StemTokenizer(), "min_df": 0.001, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},{"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 1}],
+    [createCNN, None, False, "CNN1",{"tokenizer": StemTokenizer(), "min_df": 0.001, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},{"epochs": 1, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 1}],
     [create_BC, CountVectorizer, False, "NaiveBayes1",{"tokenizer": StemTokenizer(), "min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      None],
     [createDNN, CountVectorizer, True, "DNN1",

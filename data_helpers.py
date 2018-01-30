@@ -96,7 +96,7 @@ def load_data(x,y,tokenizer):
 
     return [x, y, vocabulary, vocabulary_inv]
 
-def load_test_data(x,vocabulary,tokenizer):
+def load_test_data(x,vocabulary,tokenizer,sequence_length):
     """
     Loads and preprocessed data for the dataset.
     Returns input vectors, labels, vocabulary, and inverse vocabulary.
@@ -104,6 +104,18 @@ def load_test_data(x,vocabulary,tokenizer):
     # Load and preprocess data
     sentences = [tokenizer(t) for t in x]
 
-    sentences_padded = pad_sentences(sentences)
+    sentences_padded = pad_sentences2(sentences,sequence_length)
     x = build_input_data(sentences_padded, vocabulary)
     return x
+def pad_sentences2(sentences,sequence_length, padding_word="<PAD/>"):
+    """
+    Pads all sentences to the same length. The length is defined by the longest sentence.
+    Returns padded sentences.
+    """
+    padded_sentences = []
+    for i in range(len(sentences)):
+        sentence = sentences[i]
+        num_padding = sequence_length - len(sentence)
+        new_sentence = sentence + [padding_word] * num_padding
+        padded_sentences.append(new_sentence)
+    return padded_sentences
