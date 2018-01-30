@@ -84,6 +84,7 @@ def createCNN(features, labels):
                             # activation='relu',
                             # input_shape=(1, len(features))))
     m.add(GlobalMaxPooling1D())
+    m.add(Dense(150,activation='relu'))
     m.add(Dense(len(labels), activation='softmax'))
 
     #m = Model(inputs, output)
@@ -209,22 +210,22 @@ classifiers = [
     [createDNN, CountVectorizer, True, "DNN1",{"tokenizer": StemTokenizer(), "min_df": 0.001, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},{"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}],
     [create_BC, CountVectorizer, False, "NaiveBayes1",{"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      None],
-    [create_svm, CountVectorizer, False, "NaiveBayes1",{"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},None],
-    [createDNN, CountVectorizer, True, "DNN1",
+    [create_svm, CountVectorizer, False, "Svm",{"tokenizer":None ,"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},None],
+    [createDNN, CountVectorizer, True, "DNN2",
      {"tokenizer": StemTokenizer(), "min_df": 0.001, "max_df": 0.5, "stop_words": stop,
       "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      {"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}],
-    [create_BC, CountVectorizer, False, "NaiveBayes1",
+    [create_BC, CountVectorizer, False, "NaiveBayes2",
      { "tokenizer": None ,"min_df": 0.0007, "max_df": 0.5, "stop_words": stop,"token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      None],
-    [create_BC, CountVectorizer, False, "NaiveBayes2",
+    [create_BC, CountVectorizer, False, "NaiveBayes3",
      {"tokenizer": LemmaTokenizer(), "min_df": 0.0008, "max_df": 0.5, "stop_words": stop,
       "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"}, None],
-    [createDNN, CountVectorizer, True, "DNN2",
+    [createDNN, CountVectorizer, True, "DNN3",
      {"tokenizer": None ,"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      {"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}],
-    [createCNN, CountVectorizer, True,"CNN1",{"min_df": 0.00001, "max_df": 0.6, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b","strip_accents": "ascii"},{"epochs":150, "batch_size":32, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":1}],
-    [createDNN, CountVectorizer, True,"DNN3",{"min_df": 0.00001, "max_df": 0.6, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},{"epochs":150, "batch_size":300, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":0}]
+    [createCNN, CountVectorizer, True,"CNN1",{"tokenizer": None, "min_df": 0.00001, "max_df": 0.6, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b","strip_accents": "ascii"},{"epochs":150, "batch_size":32, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":1}],
+    [createDNN, CountVectorizer, True,"DNN4",{"tokenizer": None, "min_df": 0.00001, "max_df": 0.6, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},{"epochs":150, "batch_size":300, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":0}]
 
 ]
 do_all_classifiers(classifiers)
