@@ -178,12 +178,15 @@ def do_all_classifiers(clfs):
             output_length = y.shape[1]
             vocabulary_size = len(vocabulary_inv)  # 18765
             x, x_test, y, y_test = train_test_split(x, y, test_size=0.33, random_state=42)
+
             x_submit = load_test_data(X_submit,vocabulary,settings['tokenizer'],sequence_length)
             embedding_dim = 256
             filter_sizes = [3, 4, 5]
             num_filters = 512
             drop = 0.5
             c = createCNN(sequence_length,vocabulary_size,embedding_dim,filter_sizes,num_filters,drop,output_length)
+            le = label_encoder
+            n_features = vocabulary_size
         elif (clf[2]):
             # check for label encode)r(needed for DNN not needed for CNN)
             le = preprocessing.LabelEncoder()
@@ -193,7 +196,7 @@ def do_all_classifiers(clfs):
         else:
             c = clf[0]()
 
-        run_results.append(do_classifier(c, x, y, x_test, y_test, x_submit, le, params, name, settings))
+        run_results.append(do_classifier(c, x, y, x_test, y_test, x_submit, le, params, name, settings,n_features))
     write_results(run_results)
 
 
@@ -206,7 +209,7 @@ def write_results(results):
     file.write(tabulate([[i[0], i[2], i[3]] for i in results], headers=["Name", "Accuracy", "F1"], tablefmt='latex'))
     file.write(tabulate([[i[0],i[5]['min_df'],i[5]['max_df'],i[5]['tokenizer'],i[6]] for i in results], headers=["min_df", "max_df", "Tokenizer","Features"], tablefmt='latex'))
 
-def do_classifier(clf, x, y, x_test, y_test, x_submit, le, params, name,settings):
+def do_classifier(clf, x, y, x_test, y_test, x_submit, le, params, name,settings,n_features):
     if params:
         # check for extra classifier parameters
 
