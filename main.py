@@ -6,7 +6,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn import preprocessing
 from keras.models import Sequential
-from keras.layers import Dense, Dropout
+from keras.layers import Input, Embedding, Dense, Dropout, Convolution1D,Convolution2D, GlobalMaxPooling1D,MaxPooling2D, Flatten
 from nltk.corpus import stopwords
 from keras.utils.np_utils import to_categorical
 from keras.callbacks import ModelCheckpoint
@@ -42,10 +42,30 @@ def create_test_set(data):
 
 def createDNN(features, labels):
     m = Sequential()
-    m.add(Dense(150, input_dim=len(features), activation='relu'))
+
+    m.add(Dense(150, input_dim=len(features), activation='tanh'))
     m.add(Dropout(rate=.1))
     m.add(Dense(15, activation='tanh'))
-    m.add(Dense(len(labels), activation='sigmoid'))
+    m.add(Dense(len(labels), activation='softmax'))
+    m.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+    return m
+
+def createCNN(features, labels):
+    m = Sequential()
+
+    m.add(Embedding(len(features),
+                       500,
+                       input_length=len(features)))
+
+    m.add(Convolution1D(1200,3,padding='valid', activation='relu', strides=1 ))
+                            # filter_length=3,
+                            # border_mode='valid',
+                            # activation='relu',
+                            # input_shape=(1, len(features))))
+    m.add(GlobalMaxPooling1D())
+    #m.add(Flatten())
+    m.add(Dense(len(labels), activation='softmax'))
     m.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
     return m
@@ -86,7 +106,9 @@ def do_all_classifiers(clfs):
     X, Y = create_train_set(data)
     X_submit = create_test_set(submitdata)
 
+
     X, X_test, Y, Y_test = train_test_split(X, Y, test_size=0.33, random_state=42)
+
 
     for clf in clfs:
         name = clf[3]
@@ -123,7 +145,7 @@ def do_classifier(clf, x, y, x_test, y_test, x_submit, le,params,name):
         clf.fit(x,y,**params)
     else:
         clf.fit(x,y)
-    #print(clf.evaluate(x_test,y_test))
+    print(clf.evaluate(x_test,y_test))
     predict = clf.predict(x_test)
     submit_predict = clf.predict(x_submit)
     if le:
@@ -144,13 +166,12 @@ def do_classifier(clf, x, y, x_test, y_test, x_submit, le,params,name):
 # Format:
 # [  Classifier,Vectorizer,Label to catogeries, name, Vectorizer parameters(dict) , classifier parameters(dict)  ]
 classifiers = [
-    [createDNN, CountVectorizer, True,"DNN1",{"tokenizer":LemmaTokenizer(),"min_df":0.001, "max_df":0.5, "stop_words":stop, "token_pattern":r"\b[^\d\W]+\b","strip_accents":"ascii"},{"epochs":150, "batch_size":300, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":0}],
-    [create_BC, CountVectorizer, False, "NaiveBayes1",
-     {"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
-     None],
+    # [createDNN, CountVectorizer, True,"DNN1",{"tokenizer":LemmaTokenizer(),"min_df":0.001, "max_df":0.5, "stop_words":stop, "token_pattern":r"\b[^\d\W]+\b","strip_accents":"ascii"},{"epochs":150, "batch_size":300, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":0}],
+    # [create_BC, CountVectorizer, False, "NaiveBayes1",{"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
+    #  None],
 
-    [createDNN, CountVectorizer, True,"DNN2",{"min_df": 0.0008, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b","strip_accents": "ascii"},{"epochs":150, "batch_size":300, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":0}],
-    [createDNN, CountVectorizer, True,"DNN3",{"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},{"epochs":150, "batch_size":300, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":0}]
+    #[createDNN, CountVectorizer, True,"DNN2",{"min_df": 0.0000001, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b","strip_accents": "ascii"},{"epochs":150, "batch_size":300, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":0}],
+    [createCNN, CountVectorizer, True,"DNN3",{"min_df": 0.00001, "max_df": 0.9, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},{"epochs":150, "batch_size":300, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":1}]
 
 ]
 do_all_classifiers(classifiers)
