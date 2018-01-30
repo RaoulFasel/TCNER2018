@@ -30,6 +30,8 @@ class LemmaTokenizer(object):
 
     def __call__(self, doc):
         return [self.wnl.lemmatize(t) for t in regex.tokenize(doc) if t not in stop]
+    def __str__(self):
+        return "Lemmatization"
 
 
 class StemTokenizer(object):
@@ -38,7 +40,8 @@ class StemTokenizer(object):
 
     def __call__(self, doc):
         return [self.wnl.stem(t) for t in regex.tokenize(doc)]
-
+    def __str__(self):
+        return "Stemmning"
 
 def create_train_set(data):
     x = []
@@ -112,12 +115,14 @@ def do_all_classifiers(clfs):
     for clf in clfs:
         name = clf[3]
         params = clf[5]
+        settings = clf[4]
         le = None
         y = Y
         y_test = Y_test
         pre = clf[1](**clf[4])
         x = pre.fit_transform(X).toarray()
-        print(pre.get_feature_names())
+        print(len(pre.get_feature_names()))
+        n_features =len(pre.get_feature_names())
         x_test = pre.transform(X_test).toarray()
         x_submit = pre.transform(X_submit).toarray()
         print(pre.get_params())
@@ -127,11 +132,12 @@ def do_all_classifiers(clfs):
             le = preprocessing.LabelEncoder()
             y = convert_to_cat(y, le)
             y_test = convert_to_cat(y_test, le)
+
             c = clf[0](pre.get_feature_names(), le.classes_)
         else:
             c = clf[0]()
 
-        run_results.append(do_classifier(c, x, y, x_test, y_test, x_submit, le, params, name))
+        run_results.append(do_classifier(c, x, y, x_test, y_test, x_submit, le, params, name, settings,n_features))
     write_results(run_results)
 
 
@@ -142,9 +148,9 @@ def write_results(results):
         file.write("accuracy = " + str(r[2]) + "\n")
         file.write(tabulate(r[1], tablefmt='latex', headers=r[4]) + '\n')
     file.write(tabulate([[i[0], i[2], i[3]] for i in results], headers=["Name", "Accuracy", "F1"], tablefmt='latex'))
+    file.write(tabulate([[i[0],i[5]['min_df'],i[5]['max_df'],i[5]['tokenizer'],i[6]] for i in results], headers=["min_df", "max_df", "Tokenizer","Number of Features"], tablefmt='latex'))
 
-
-def do_classifier(clf, x, y, x_test, y_test, x_submit, le, params, name):
+def do_classifier(clf, x, y, x_test, y_test, x_submit, le, params, name,settings,n_features):
     if params:
         # check for extra classifier parameters
 
@@ -156,19 +162,18 @@ def do_classifier(clf, x, y, x_test, y_test, x_submit, le, params, name):
     predict = clf.predict(x_test)
     submit_predict = clf.predict(x_submit)
     if le:
-        print(le.classes_)
         # check for label encoder(needed for DNN)
         y_test, predict = ([le.classes_[r.tolist().index(max(r))] for r in y_test],
                            [le.classes_[r.tolist().index(max(r))] for r in predict])
         print(confusion_matrix(y_test, predict, labels=le.classes_))
         return [name, confusion_matrix(y_test, predict, labels=le.classes_), accuracy_score(y_test, predict),
-                f1_score(y_test, predict, average='micro'), le.classes_]
+                f1_score(y_test, predict, average='micro'), le.classes_,settings,n_features]
         write_predictions(name + "txt", [le.classes_[r.tolist().index(max(r))] for r in submit_predict])
     else:
         print(confusion_matrix(y_test, predict))
         return [name, confusion_matrix(y_test, predict, labels=['INFOCOM', 'ISCAS', 'SIGGRAPH', 'VLDB', 'WWW']),
                 accuracy_score(y_test, predict), f1_score(y_test, predict, average='micro'),
-                ['INFOCOM', 'ISCAS', 'SIGGRAPH', 'VLDB', 'WWW']]
+                ['INFOCOM', 'ISCAS', 'SIGGRAPH', 'VLDB', 'WWW'],settings,n_features]
         write_predictions(name + "txt", submit_predict)
 
 
@@ -181,14 +186,14 @@ classifiers = [
       "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      {"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}],
     [create_BC, CountVectorizer, False, "NaiveBayes1",
-     {"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
+     { "tokenizer": None ,"min_df": 0.0007, "max_df": 0.5, "stop_words": stop,"token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      None],
 
     [create_BC, CountVectorizer, False, "NaiveBayes2",
      {"tokenizer": LemmaTokenizer(), "min_df": 0.0008, "max_df": 0.5, "stop_words": stop,
       "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"}, None],
     [createDNN, CountVectorizer, True, "DNN2",
-     {"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
+     {"tokenizer": None ,"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      {"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}]
 ]
 do_all_classifiers(classifiers)
