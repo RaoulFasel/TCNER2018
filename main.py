@@ -209,7 +209,7 @@ classifiers = [
     [createDNN, CountVectorizer, True, "DNN1",{"tokenizer": StemTokenizer(), "min_df": 0.001, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},{"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}],
     [create_BC, CountVectorizer, False, "NaiveBayes1",{"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      None],
-    [create_svm, CountVectorizer, False, "NaiveBayes1",{"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
+    [create_svm, CountVectorizer, False, "NaiveBayes1",{"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},None],
     [createDNN, CountVectorizer, True, "DNN1",
      {"tokenizer": StemTokenizer(), "min_df": 0.001, "max_df": 0.5, "stop_words": stop,
       "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
@@ -217,7 +217,6 @@ classifiers = [
     [create_BC, CountVectorizer, False, "NaiveBayes1",
      { "tokenizer": None ,"min_df": 0.0007, "max_df": 0.5, "stop_words": stop,"token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      None],
-
     [create_BC, CountVectorizer, False, "NaiveBayes2",
      {"tokenizer": LemmaTokenizer(), "min_df": 0.0008, "max_df": 0.5, "stop_words": stop,
       "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"}, None],
