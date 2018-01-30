@@ -168,17 +168,22 @@ def do_all_classifiers(clfs):
             n_features =len(pre.get_feature_names())
             x_test = pre.transform(X_test).toarray()
             x_submit = pre.transform(X_submit).toarray()
-        elif clf[0]==createCNN:
+        if clf[0]==createCNN:
+
             label_encoder = LabelEncoder()
-            integer_encoded = label_encoder.fit_transform(Y)
-            Y = to_categorical(integer_encoded)
+
 
             x, y, vocabulary, vocabulary_inv = load_data(X,Y,settings['tokenizer'])
+
+            y_test = np.array(y_test)
+            y = label_encoder.fit_transform(y)
+            y = to_categorical(y)
+            y_test = label_encoder.transform(y_test)
+            y_test = to_categorical(y_test)
             sequence_length = x.shape[1]  # 56
             output_length = y.shape[1]
             vocabulary_size = len(vocabulary_inv)  # 18765
-            x, x_test, y, y_test = train_test_split(x, y, test_size=0.33, random_state=42)
-
+            x_test = load_test_data(X_test,vocabulary,settings['tokenizer'],sequence_length)
             x_submit = load_test_data(X_submit,vocabulary,settings['tokenizer'],sequence_length)
             embedding_dim = 256
             filter_sizes = [3, 4, 5]
@@ -187,15 +192,15 @@ def do_all_classifiers(clfs):
             c = createCNN(sequence_length,vocabulary_size,embedding_dim,filter_sizes,num_filters,drop,output_length)
             le = label_encoder
             n_features = vocabulary_size
-        elif (clf[2]):
+        if (clf[2]):
             # check for label encode)r(needed for DNN not needed for CNN)
             le = preprocessing.LabelEncoder()
             y = convert_to_cat(y,le)
             y_test = convert_to_cat(y_test,le)
             c = clf[0](pre.get_feature_names(), le.classes_)
-        else:
-            c = clf[0]()
 
+        if clf[0]==create_BC:
+            c = clf[0]()
         run_results.append(do_classifier(c, x, y, x_test, y_test, x_submit, le, params, name, settings,n_features))
     write_results(run_results)
 
