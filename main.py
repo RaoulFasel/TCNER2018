@@ -7,7 +7,7 @@ from sklearn.metrics import confusion_matrix, accuracy_score
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn import preprocessing
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Embedding, Convolution1D,GlobalMaxPool1D
+from keras.layers import Dense, Dropout, Embedding, Convolution1D,GlobalMaxPooling1D
 from nltk.corpus import stopwords
 from keras.utils.np_utils import to_categorical
 from keras.callbacks import ModelCheckpoint
@@ -178,8 +178,8 @@ classifiers = [
      {"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      None],
 
-    [createDNN, CountVectorizer, True,"DNN2",{"min_df": 0.0008, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b","strip_accents": "ascii"},{"epochs":150, "batch_size":300, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":0}],
-    [createDNN, CountVectorizer, True,"DNN3",{"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},{"epochs":150, "batch_size":300, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":0}]
+    [createCNN, CountVectorizer, True,"DNN2",{"min_df": 0.00001, "max_df": 0.6, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b","strip_accents": "ascii"},{"epochs":150, "batch_size":300, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":1}],
+    [createDNN, CountVectorizer, True,"DNN3",{"min_df": 0.00001, "max_df": 0.6, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},{"epochs":150, "batch_size":300, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":0}]
 
 ]
 do_all_classifiers(classifiers)
