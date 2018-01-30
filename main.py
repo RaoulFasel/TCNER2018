@@ -51,7 +51,7 @@ def createDNN(features, labels):
 
     return m
 
-def createDNN(features, labels):
+def createCNN(features, labels):
     m = Sequential()
 
     m.add(Embedding(len(features),
