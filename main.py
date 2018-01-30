@@ -5,7 +5,7 @@ import numpy
 from sklearn.cross_validation import train_test_split
 from sklearn.metrics import confusion_matrix, accuracy_score, f1_score
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn import preprocessing
+from sklearn import preprocessing, svm
 from keras.models import Sequential, Model
 from keras.layers import Dense, Dropout, Input, Embedding, Convolution1D,GlobalMaxPooling1D
 from nltk.corpus import stopwords
@@ -219,7 +219,7 @@ classifiers = [
       "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"}, None],
     [createDNN, CountVectorizer, True, "DNN2",
      {"tokenizer": None ,"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
-     {"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}]
+     {"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}],
     [createCNN, CountVectorizer, True,"CNN1",{"min_df": 0.00001, "max_df": 0.6, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b","strip_accents": "ascii"},{"epochs":150, "batch_size":32, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":1}],
     [createDNN, CountVectorizer, True,"DNN3",{"min_df": 0.00001, "max_df": 0.6, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},{"epochs":150, "batch_size":300, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":0}]
 
