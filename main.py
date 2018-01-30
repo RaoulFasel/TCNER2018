@@ -7,7 +7,7 @@ from sklearn.metrics import confusion_matrix, accuracy_score
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn import preprocessing
 from keras.models import Sequential
-from keras.layers import Dense, Dropout
+from keras.layers import Dense, Dropout, Embedding, Convolution1D,GlobalMaxPool1D
 from nltk.corpus import stopwords
 from keras.utils.np_utils import to_categorical
 from keras.callbacks import ModelCheckpoint
@@ -51,6 +51,23 @@ def createDNN(features, labels):
 
     return m
 
+def createDNN(features, labels):
+    m = Sequential()
+
+    m.add(Embedding(len(features),
+                       500,
+                       input_length=len(features)))
+
+    m.add(Convolution1D(1200,3,padding='valid', activation='relu', strides=1 ))
+                            # filter_length=3,
+                            # border_mode='valid',
+                            # activation='relu',
+                            # input_shape=(1, len(features))))
+    m.add(GlobalMaxPooling1D())
+    m.add(Dense(len(labels), activation='softmax'))
+    m.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+    return m
 
 def create_BC():
     clf = GaussianNB()
