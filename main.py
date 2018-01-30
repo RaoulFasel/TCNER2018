@@ -206,6 +206,10 @@ def do_classifier(clf, x, y, x_test, y_test, x_submit, le, params, name,settings
 # Format:
 # [  Classifier,Vectorizer,Label to catogeries, name, Vectorizer parameters(dict) , classifier parameters(dict)  ]
 classifiers = [
+    [createDNN, CountVectorizer, True, "DNN1",{"tokenizer": StemTokenizer(), "min_df": 0.001, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},{"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}],
+    [create_BC, CountVectorizer, False, "NaiveBayes1",{"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
+     None],
+    [create_svm, CountVectorizer, False, "NaiveBayes1",{"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
     [createDNN, CountVectorizer, True, "DNN1",
      {"tokenizer": StemTokenizer(), "min_df": 0.001, "max_df": 0.5, "stop_words": stop,
       "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
