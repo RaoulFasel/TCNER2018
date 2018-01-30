@@ -68,10 +68,8 @@ def build_vocab(sentences):
     vocabulary_inv = [x[0] for x in word_counts.most_common()]
     vocabulary_inv.append("#UNKOWN")
     vocabulary_inv = list(sorted(vocabulary_inv))
-
     # Mapping from word to index
     vocabulary = {x: i for i, x in enumerate(vocabulary_inv)}
-
     return [vocabulary, vocabulary_inv]
 
 
@@ -79,7 +77,7 @@ def build_input_data(sentences, vocabulary):
     """
     Maps sentences and labels to vectors based on a vocabulary.
     """
-    x = np.array([[vocabulary[word] if word in vocabulary else "#UNKOWN" for word in sentence] for sentence in sentences])
+    x = np.array([[vocabulary[word] if word in vocabulary.keys() else "#UNKOWN" for word in sentence] for sentence in sentences])
     return x
 
 
