@@ -236,7 +236,7 @@ def do_all_classifiers(clfs):
             y_test = convert_to_cat(y_test,le)
             c = clf[0](pre.get_feature_names(), le.classes_)
 
-        if clf[0]==create_BC:
+        if clf[0]==create_BC or clf[0]==create_svm:
             c = clf[0]()
         run_results.append(do_classifier(c, x, y, x_test, y_test, x_submit, le, params, name, settings,n_features))
     write_results(run_results)
