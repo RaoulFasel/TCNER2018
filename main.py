@@ -36,6 +36,23 @@ nltk.download('stopwords')
 nltk.download('wordnet')
 stop = set(stopwords.words('english'))
 
+class Reg(object):
+    def __init__(self):
+
+    def __call__(self, doc):
+        return [t for t in regex.tokenize(doc) if t not in stop]
+    def __str__(self):
+        return "Regular expression"
+
+
+class RegWithStop(object):
+    def __init__(self):
+
+    def __call__(self, doc):
+        return [t for t in regex.tokenize(doc)]
+    def __str__(self):
+        return "Regular expression with stopwords "
+
 
 class LemmaTokenizer(object):
     def __init__(self):
@@ -55,6 +72,26 @@ class StemTokenizer(object):
         return [self.wnl.stem(t) for t in regex.tokenize(doc)]
     def __str__(self):
         return "Stemmning"
+
+class LemmaTokenizerWithStop(object):
+    def __init__(self):
+        self.wnl = WordNetLemmatizer()
+
+    def __call__(self, doc):
+        return [self.wnl.lemmatize(t) for t in regex.tokenize(doc)]
+    def __str__(self):
+        return "Lemmatization with stopwords"
+
+
+class StemTokenizerWithStop(object):
+    def __init__(self):
+        self.wnl = nltk.SnowballStemmer("english", ignore_stopwords=False)
+
+    def __call__(self, doc):
+        return [self.wnl.stem(t) for t in regex.tokenize(doc)]
+    def __str__(self):
+        return "Stemmning with stopwords"
+
 
 def create_train_set(data):
     x = []
@@ -246,7 +283,14 @@ def do_classifier(clf, x, y, x_test, y_test, x_submit, le, params, name,settings
 # Format:
 # [  Classifier,Vectorizer,Label to catogeries, name, Vectorizer parameters(dict) , classifier parameters(dict)  ]
 classifiers = [
-    [createCNN, None, False, "CNN1",{"tokenizer": StemTokenizer(), "min_df": 0.001, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},{"epochs": 1, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 1}],
+    [createCNN, None, False, "CNN1",{"tokenizer": StemTokenizerWithStop()},{"epochs": 150, "batch_size": 32, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 1}],
+    [createCNN, None, False, "CNN2", {"tokenizer": LemmaTokenizerWithStop()},
+     {"epochs": 150, "batch_size": 32, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 1}],
+    [createCNN, None, False, "CNN3", {"tokenizer": RegWithStop()},
+     {"epochs": 150, "batch_size": 32, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 1}],
+    [createCNN, None, False, "CNN4", {"tokenizer": Reg()},
+     {"epochs": 150, "batch_size": 32, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 1}],
+
     [create_BC, CountVectorizer, False, "NaiveBayes1",{"tokenizer": StemTokenizer(), "min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      None],
     [createDNN, CountVectorizer, True, "DNN1",
