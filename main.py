@@ -21,7 +21,7 @@ from nltk.tokenize import RegexpTokenizer
 import string
 from data_helpers import *
 import csv
-
+from operator import itemgetter
 import numpy as np
 import re
 import itertools
@@ -248,7 +248,7 @@ def write_results(results):
         file.write(r[0] + '\n')
         file.write("accuracy = " + str(r[2]) + "\n")
         file.write(tabulate(r[1], tablefmt='latex', headers=r[4]) + '\n')
-    file.write(tabulate([[i[0], i[2], i[3]] for i in results], headers=["Name", "Accuracy", "F1"], tablefmt='latex'))
+    file.write(tabulate(sorted([[i[0], i[2], i[3]] for i in results],key=itemgetter(2)), headers=["Name", "Accuracy", "F1"], tablefmt='latex'))
     file.write(tabulate([[i[0],i[5]['min_df'],i[5]['max_df'],i[5]['tokenizer'],i[6]] for i in results], headers=["min_df", "max_df", "Tokenizer","Features"], tablefmt='latex'))
 
 def do_classifier(clf, x, y, x_test, y_test, x_submit, le, params, name,settings,n_features):
