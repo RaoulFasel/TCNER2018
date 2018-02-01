@@ -270,12 +270,12 @@ def do_classifier(clf, x, y, x_test, y_test, x_submit, le, params, name,settings
         print(confusion_matrix(y_test, predict, labels=le.classes_))
         write_predictions(name + "txt", [le.classes_[r.tolist().index(max(r))] for r in submit_predict])
         return [name, confusion_matrix(y_test, predict, labels=le.classes_), accuracy_score(y_test, predict),
-                f1_score(y_test, predict, average='micro'), le.classes_,settings,n_features]
+                f1_score(y_test, predict, average='macro'), le.classes_,settings,n_features]
     else:
         print(confusion_matrix(y_test, predict))
         write_predictions(name + "txt", submit_predict)
         return [name, confusion_matrix(y_test, predict, labels=['INFOCOM', 'ISCAS', 'SIGGRAPH', 'VLDB', 'WWW']),
-                accuracy_score(y_test, predict), f1_score(y_test, predict, average='micro'),
+                accuracy_score(y_test, predict), f1_score(y_test, predict, average='macro'),
                 ['INFOCOM', 'ISCAS', 'SIGGRAPH', 'VLDB', 'WWW'],settings,n_features]
 
 
@@ -327,15 +327,14 @@ classifiers = [
      {"tokenizer": LemmaTokenizer(), "min_df": 0.00001, "max_df": 0.6, "stop_words": stop,
       "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      {"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}],
-
     [createDNN, CountVectorizer, True, "DNN6",
      {"tokenizer": Reg(), "min_df": 0.00001, "max_df": 0.6, "stop_words": stop,
       "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
-     {"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}],
+     {"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}]#,
 
-    [create_svm, CountVectorizer, False, "SVM1",
-     {"tokenizer": Reg(),"min_df": 0.0001, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
-     None]
+    # #[create_svm, CountVectorizer, False, "SVM1",
+    #  {"tokenizer": Reg(),"min_df": 0.0001, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
+    #  None]
 
 
     # [create_BC, CountVectorizer, False, "NaiveBayes1",
