@@ -306,23 +306,48 @@ classifiers = [
       "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      None],
 
-
-
-
     [createDNN, CountVectorizer, True, "DNN1",
-     {"tokenizer": LemmaTokenizer(), "min_df": 0.0001, "max_df": 0.6, "stop_words": stop,
+     {"tokenizer": StemTokenizer(), "min_df": 0.0001, "max_df": 0.5, "stop_words": stop,
       "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      {"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}],
-    [create_BC, CountVectorizer, False, "NaiveBayes1",
-     { "tokenizer": None ,"min_df": 0.0007, "max_df": 0.5, "stop_words": stop,"token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
-     None],
-    [create_BC, CountVectorizer, False, "NaiveBayes2",
-     {"tokenizer": LemmaTokenizer(), "min_df": 0.0008, "max_df": 0.5, "stop_words": stop,
-      "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"}, None],
     [createDNN, CountVectorizer, True, "DNN2",
-     {"tokenizer": None ,"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
+     {"tokenizer": LemmaTokenizer(), "min_df": 0.0001, "max_df": 0.5, "stop_words": stop,
+      "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      {"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}],
-    [createDNN, CountVectorizer, True,"DNN3",{"tokenizer":None,"min_df": 0.00001, "max_df": 0.6, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},{"epochs":150, "batch_size":300, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":0}]
+    [createDNN, CountVectorizer, True, "DNN3",
+     {"tokenizer": Reg(), "min_df": 0.0001, "max_df": 0.5, "stop_words": stop,
+      "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
+     {"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}],
+
+    [createDNN, CountVectorizer, True, "DNN4",
+     {"tokenizer": StemTokenizer(), "min_df": 0.00001, "max_df": 0.6, "stop_words": stop,
+      "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
+     {"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}],
+    [createDNN, CountVectorizer, True, "DNN5",
+     {"tokenizer": LemmaTokenizer(), "min_df": 0.00001, "max_df": 0.6, "stop_words": stop,
+      "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
+     {"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}],
+
+    [createDNN, CountVectorizer, True, "DNN6",
+     {"tokenizer": Reg(), "min_df": 0.00001, "max_df": 0.6, "stop_words": stop,
+      "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
+     {"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}],
+
+    [create_svm, CountVectorizer, False, "SVM1",
+     {"tokenizer": Reg(),"min_df": 0.0001, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
+     None]
+
+
+    # [create_BC, CountVectorizer, False, "NaiveBayes1",
+    #  { "tokenizer": None ,"min_df": 0.0007, "max_df": 0.5, "stop_words": stop,"token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
+    #  None],
+    # [create_BC, CountVectorizer, False, "NaiveBayes2",
+    #  {"tokenizer": LemmaTokenizer(), "min_df": 0.0008, "max_df": 0.5, "stop_words": stop,
+    #   "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"}, None],
+    # [createDNN, CountVectorizer, True, "DNN2",
+    #  {"tokenizer": None ,"min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
+    #  {"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}],
+    # [createDNN, CountVectorizer, True,"DNN3",{"tokenizer":None,"min_df": 0.00001, "max_df": 0.6, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},{"epochs":150, "batch_size":300, "validation_split":0.2, "shuffle":True,"callbacks":None, "verbose":0}]
 
 ]
 print(len(classifiers))
