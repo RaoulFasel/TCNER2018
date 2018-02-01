@@ -38,7 +38,7 @@ stop = set(stopwords.words('english'))
 
 class Reg(object):
     def __init__(self):
-
+        pass
     def __call__(self, doc):
         return [t for t in regex.tokenize(doc) if t not in stop]
     def __str__(self):
@@ -47,7 +47,7 @@ class Reg(object):
 
 class RegWithStop(object):
     def __init__(self):
-
+        pass
     def __call__(self, doc):
         return [t for t in regex.tokenize(doc)]
     def __str__(self):
@@ -283,7 +283,9 @@ def do_classifier(clf, x, y, x_test, y_test, x_submit, le, params, name,settings
 # Format:
 # [  Classifier,Vectorizer,Label to catogeries, name, Vectorizer parameters(dict) , classifier parameters(dict)  ]
 classifiers = [
-    [createCNN, None, False, "CNN1",{"tokenizer": StemTokenizerWithStop()},{"epochs": 150, "batch_size": 32, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 1}],
+    [createCNN, None, False, "CNN1", {"tokenizer": StemTokenizerWithStop()},
+     {"epochs": 150, "batch_size": 32, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 1}],
+
     [createCNN, None, False, "CNN2", {"tokenizer": LemmaTokenizerWithStop()},
      {"epochs": 150, "batch_size": 32, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 1}],
     [createCNN, None, False, "CNN3", {"tokenizer": RegWithStop()},
