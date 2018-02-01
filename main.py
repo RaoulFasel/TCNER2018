@@ -283,20 +283,34 @@ def do_classifier(clf, x, y, x_test, y_test, x_submit, le, params, name,settings
 # Format:
 # [  Classifier,Vectorizer,Label to catogeries, name, Vectorizer parameters(dict) , classifier parameters(dict)  ]
 classifiers = [
-    [createCNN, None, False, "CNN1", {"tokenizer": StemTokenizerWithStop()},
+    [createCNN, None, False, "CNN1", {"tokenizer": StemTokenizerWithStop(), "min_df": "n/a", "max_df": "n/a",},
      {"epochs": 150, "batch_size": 32, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 1}],
 
-    [createCNN, None, False, "CNN2", {"tokenizer": LemmaTokenizerWithStop()},
+    [createCNN, None, False, "CNN2", {"tokenizer": LemmaTokenizerWithStop(), "min_df": "n/a", "max_df": "n/a",},
      {"epochs": 150, "batch_size": 32, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 1}],
-    [createCNN, None, False, "CNN3", {"tokenizer": RegWithStop()},
+    [createCNN, None, False, "CNN3", {"tokenizer": RegWithStop(), "min_df": "n/a", "max_df": "n/a",},
      {"epochs": 150, "batch_size": 32, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 1}],
-    [createCNN, None, False, "CNN4", {"tokenizer": Reg()},
+    [createCNN, None, False, "CNN4", {"tokenizer": Reg(), "min_df": "n/a", "max_df":"n/a",},
      {"epochs": 150, "batch_size": 32, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 1}],
 
-    [create_BC, CountVectorizer, False, "NaiveBayes1",{"tokenizer": StemTokenizer(), "min_df": 0.0007, "max_df": 0.5, "stop_words": stop, "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
+    [create_BC, CountVectorizer, False, "NaiveBayes1",
+     {"tokenizer": StemTokenizer(), "min_df": 0.0001, "max_df": 0.5, "stop_words": stop,
+      "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      None],
+    [create_BC, CountVectorizer, False, "NaiveBayes2",
+     {"tokenizer": Reg(), "min_df": 0.0001, "max_df": 0.5, "stop_words": stop,
+      "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
+     None],
+    [create_BC, CountVectorizer, False, "NaiveBayes3",
+     {"tokenizer": LemmaTokenizer(), "min_df": 0.0001, "max_df": 0.5, "stop_words": stop,
+      "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
+     None],
+
+
+
+
     [createDNN, CountVectorizer, True, "DNN1",
-     {"tokenizer": StemTokenizer(), "min_df": 0.001, "max_df": 0.5, "stop_words": stop,
+     {"tokenizer": LemmaTokenizer(), "min_df": 0.0001, "max_df": 0.6, "stop_words": stop,
       "token_pattern": r"\b[^\d\W]+\b", "strip_accents": "ascii"},
      {"epochs": 150, "batch_size": 300, "validation_split": 0.2, "shuffle": True, "callbacks": None, "verbose": 0}],
     [create_BC, CountVectorizer, False, "NaiveBayes1",
