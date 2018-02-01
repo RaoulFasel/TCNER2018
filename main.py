@@ -268,15 +268,15 @@ def do_classifier(clf, x, y, x_test, y_test, x_submit, le, params, name,settings
         y_test, predict = ([le.classes_[r.tolist().index(max(r))] for r in y_test],
                            [le.classes_[r.tolist().index(max(r))] for r in predict])
         print(confusion_matrix(y_test, predict, labels=le.classes_))
+        write_predictions(name + "txt", [le.classes_[r.tolist().index(max(r))] for r in submit_predict])
         return [name, confusion_matrix(y_test, predict, labels=le.classes_), accuracy_score(y_test, predict),
                 f1_score(y_test, predict, average='micro'), le.classes_,settings,n_features]
-        write_predictions(name + "txt", [le.classes_[r.tolist().index(max(r))] for r in submit_predict])
     else:
         print(confusion_matrix(y_test, predict))
+        write_predictions(name + "txt", submit_predict)
         return [name, confusion_matrix(y_test, predict, labels=['INFOCOM', 'ISCAS', 'SIGGRAPH', 'VLDB', 'WWW']),
                 accuracy_score(y_test, predict), f1_score(y_test, predict, average='micro'),
                 ['INFOCOM', 'ISCAS', 'SIGGRAPH', 'VLDB', 'WWW'],settings,n_features]
-        write_predictions(name + "txt", submit_predict)
 
 
 # all classifiers to be trained and evaluated
